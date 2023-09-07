@@ -1,6 +1,8 @@
 import React, { useState } from "react";
-
+import axios from "axios"
+import { useNavigate } from "react-router-dom";
 const Register = () => {
+  const navigate = useNavigate();
     const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -14,19 +16,24 @@ const Register = () => {
   };
 
   const handleNameChange = (e) => {
-    setName(e.target.value); // Update the name state when the input changes
+    setName(e.target.value); 
   };
 
-  const handleRegister = () => {
-    // Here, you can send the email and password to your backend for registration.
-    // You can use a fetch request or any other method to send this data to your server.
-    // Replace the alert with your actual registration logic.
-
-    alert(`Registration successful!\nEmail: ${email}\nPassword: ${password}`);
-
-    // Optionally, you can clear the form fields after registration.
-    setEmail("");
-    setPassword("");
+  const handleRegister = async () => {
+    try {
+      const response = await axios.post("http://localhost:3001/register", {
+        name,
+        email,
+        password,
+      });
+      alert(`Registration successful!\nMessage: ${response.data.message}\n PLEASE LOGIN! `);
+      setEmail("");
+      setPassword("");
+      setName("");
+      navigate("/login");
+    } catch (error) {
+      alert(`Registration failed!\nPlease check your email and password \nOr check if youre already registerred`);
+    }
   };
 
   return (

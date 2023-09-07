@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import axios from "axios"
 
 const Login = () => {
   const [email, setEmail] = useState("");
@@ -12,16 +13,25 @@ const Login = () => {
     setPassword(e.target.value);
   };
 
-  const handleLogin = () => {
-    // Here, you can send the email and password to your backend for authentication.
-    // You can use a fetch request or any other method to send this data to your server.
-    // Replace the alert with your actual login logic.
-
-    alert(`Login successful!\nEmail: ${email}\nPassword: ${password}`);
-
-    // Optionally, you can clear the form fields after login.
-    setEmail("");
-    setPassword("");
+  const handleLogin = async () => {
+    try {
+      const response = await axios.post("http://localhost:3001/login", {
+        email,
+        password,
+      });
+      console.log(response);
+      if (response.data.status) {
+        alert(`Login successful!\nEmail: ${response.data.userData.email}`);
+        localStorage.setItem("token", response.data.token);
+      } else {
+        alert(`Login failed!\nMessage: ${response.data.message}`);
+      }
+      setEmail("");
+      setPassword("");
+    } catch (error) {
+      console.log(error);
+      alert(`Login failed!\nPlease check your email and password \nOr Register!`);
+    }
   };
 
   return (
